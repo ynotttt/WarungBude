@@ -1,0 +1,7 @@
+Nama Dish: ayam
+Harga: Rp12000
+Jumlah: 4
+
+Nama Dish: kambing goreng
+Harga: Rp23000
+Jumlah: 8
