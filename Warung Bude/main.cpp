@@ -1,5 +1,6 @@
-#include "functions/utilities/utilities.h"
-#include "functions/screen/screen.h"
+#include "functions/utilities.h"
+#include "functions/screen.h"
+#include "functions/database.h"
 
 int main() {
     mainMenu();
