@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "screen.h"
+#include "source.h"
+#include "utilities.h"
 
 // Database
 struct Dish {

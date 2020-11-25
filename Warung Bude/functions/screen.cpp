@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "utilities.h"
+#include "screen.h"
+#include "database.cpp"
 
 void mainMenu() {
     detectOS();
