@@ -1,0 +1,11 @@
+Nama Dish: ayam
+Harga: Rp13000
+Jumlah: 8
+
+Nama Dish: ikan bakar
+Harga: Rp32000
+Jumlah: 7
+
+Nama Dish: roti panggang
+Harga: Rp12000
+Jumlah: 3
