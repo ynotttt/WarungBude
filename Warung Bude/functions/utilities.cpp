@@ -11,18 +11,24 @@ void enterPrompt() {
 void detectOS() {
     #ifdef _WIN32
         #ifdef _WIN64
-            printf("System: Windows 64 bit\n");
+            printf("System: Windows 64-bit\n");
         #else
-            printf("System: Windows 32 bit\n");
+            printf("System: Windows 32-bit\n");
         #endif
-    #elif TARGET_OS_MAC
-        printf("System: MacOS\n");
+    #elif __APPLE__ || __MACH__
+        printf("System: MacOSX\n");
     #elif __linux__
         printf("System: Linux\n");
     #elif __ANDROID__
         printf("System: Android\n");
     #elif __APPLE__
         printf("System: Apple\n");
+    #elif __FreeBSD__
+        printf("System: FreeBSD\n");
+    #elif __unix || __unix__
+        printf("System: Unix");
+    #else
+        printf("System: Other\n");
     #endif
 }
 
