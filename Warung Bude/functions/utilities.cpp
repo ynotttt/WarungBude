@@ -37,7 +37,7 @@ void delay() {
 }
 
 void cls() {
-    for (int i = 0; i < 1e2; i++) puts("");
+    system("@cls||clear");
 }
 
 int strctr(char *str) {
