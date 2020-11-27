@@ -1,5 +1,5 @@
 extern int longestDishName, ctrDish, ctrCust;
-#include "database.cpp"
+#include "../model/database.cpp"
 
 unsigned long djb2(char *str) {
     unsigned long hash = 5381; int c;
@@ -20,7 +20,7 @@ void checkDishLongestName()
 
 void AlgorithmBootcamp() {
     char ch;
-    FILE *fp = fopen("txtfile/splash.txt","r");
+    FILE *fp = fopen("../model/splash.txt","r");
     while((ch = fgetc(fp)) != EOF)
     {
         printf("%c", ch);
@@ -45,7 +45,7 @@ void insert(char *str) {
 }
 
 void editFileDish() {
-    FILE *fdish = fopen("txtfile/dish.txt", "w");
+    FILE *fdish = fopen("dish.txt", "w");
 
     currDish = headDish;
     for (int i = 0; i < ctrDish; i++)
@@ -60,7 +60,7 @@ void editFileDish() {
 }
 
 void editFileCust() {
-    FILE *fcust = fopen("txtfile/customer.txt", "w");
+    FILE *fcust = fopen("customer.txt", "w");
     
     for (int i = 0; i < 26; i++)
     {

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include "functions/screensaver.cpp"
+#include "../controller/screensaver.cpp"
 
 /* ================================================================================================ */
 

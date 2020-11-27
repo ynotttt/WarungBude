@@ -1,0 +1,3 @@
+Nama Dish: telor dadar
+Harga: Rp2000
+Jumlah: 4
