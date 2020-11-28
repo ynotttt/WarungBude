@@ -21,6 +21,7 @@ void addCustomer(); // 3
 void searchCustomer(); // 4
 void viewWarteg(); // 5
 void order(); // 6
+void payment(); // 7
 void endProgram(); // 8
 
 // utilities

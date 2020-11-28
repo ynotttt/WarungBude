@@ -176,7 +176,7 @@ int checkUniqueDish(char *tempName) {
     currDish = headDish;
     while (currDish)
     {
-        if (strcasecmp(tempName, currDish->foodName) == 0)
+        if (strcmp(tempName, currDish->foodName) == 0)
         {
             return 1;
         }
@@ -191,12 +191,12 @@ int popThisDish(char *name)
     {
         return 1;
     }
-    else if (strcasecmp(name, headDish->foodName) == 0)
+    else if (strcmp(name, headDish->foodName) == 0)
     {
         popHead();
         return 0;
     }
-    else if (strcasecmp(name, tailDish->foodName) == 0)
+    else if (strcmp(name, tailDish->foodName) == 0)
     {
         popTail();
         return 0;

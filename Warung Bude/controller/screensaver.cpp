@@ -10,6 +10,7 @@ void addCustomer(); // 3
 void searchCustomer(); // 4
 void viewWarteg(); // 5
 void order(); // 6
+void payment(); // 7
 void endProgram(); // 8
 
 /* Main Menu */
@@ -51,7 +52,7 @@ void mainMenu() {
                 order();
                 break;
             case 7:
-                puts("7");
+                payment();
                 break;
             case 8:
                 endProgram();
@@ -272,14 +273,35 @@ void order() {
         }
     } while (nOrder < 0);
     
+    char arr[255];
     for (int i = 0; i < nOrder; i++)
     {
-        printf("[%d] Insert the dish’s name and quantity: \n", i+1); // ini belom kelar
+        ;
     }
 
     puts("Order success!");
     enterPrompt();
     cls(); mainMenu();
+}
+
+void payment() {
+    if (!ctrCust) {
+        puts("There's no customers currently...");
+        enterPrompt(); cls(); mainMenu();
+    }
+
+    int idx;
+    do
+    {
+        printf("Insert the customer’s index: "); scanf("%d", &idx); getchar();
+    } while (idx < 0 || idx > 26);
+    puts("");
+    if (!headCustomer[idx]) {
+        puts("There's no order for that customer's ID");
+        enterPrompt(); cls(); mainMenu();
+    }
+
+    
 }
 
 /* 8. Exit Warteg */
