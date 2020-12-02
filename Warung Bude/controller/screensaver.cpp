@@ -276,7 +276,26 @@ void order() {
     char arr[255];
     for (int i = 0; i < nOrder; i++)
     {
-        ;
+        char inputUnformatted[255], *orderDishName; int dishAmount;
+        printf("[%d] Insert the dish’s name and quantity: ", i+1); scanf("%[^\n]", inputUnformatted); getchar();
+        if (inputUnformatted[0] - '0' == 0)
+        {
+            cls(); mainMenu();
+        }
+        formatOrder(inputUnformatted, &orderDishName, &dishAmount);
+
+        struct Dish *isThisDishAvailable = searchThisDishByName(orderDishName);
+        if (isThisDishAvailable) {
+            if(isThisDishAvailable->quantity - dishAmount < 0){
+                printf("We only got %d Dish available for %s. Please input another amount.\n", isThisDishAvailable->quantity, isThisDishAvailable->foodName);
+                i--; continue;
+            }
+            isThisDishAvailable->quantity -= dishAmount;
+        }
+        else {
+            printf("%s is currently not available. Please input another Dish.\n", orderDishName);
+            i--;
+        }
     }
 
     puts("Order success!");
@@ -284,6 +303,7 @@ void order() {
     cls(); mainMenu();
 }
 
+/* 7. Payment */
 void payment() {
     if (!ctrCust) {
         puts("There's no customers currently...");

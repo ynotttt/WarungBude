@@ -1,10 +1,48 @@
 extern int longestDishName, ctrDish, ctrCust;
 #include "../model/database.cpp"
 
-unsigned long djb2(char *str) {
-    unsigned long hash = 5381; int c;
+unsigned long djb2(char *str)
+{
+    unsigned long hash = 5381;
+    int c;
     while ((c = *str++)) hash = ((hash << 5) + hash) + c;
     return hash % 25;
+}
+
+struct Dish *searchThisDishByName(char *orderDishName)
+{
+    if (!headDish)
+    {
+        return NULL;
+    }
+    else if (headDish == tailDish)
+    {
+        if (strcmp(headDish->foodName, orderDishName) == 0)
+        {
+            return headDish;
+        }
+    }
+    else if (strcmp(headDish->foodName, orderDishName) == 0)
+    {
+        return headDish;
+    }
+    else if (strcmp(tailDish->foodName, orderDishName) == 0)
+    {
+        return tailDish;
+    }
+    else
+    {
+        currDish = headDish;
+        while (currDish != NULL)
+        {
+            if (strcmp(currDish->foodName, orderDishName) == 0)
+            {
+                return currDish;
+            }
+            currDish = currDish->next;
+        }
+    }
+    return NULL;
 }
 
 void checkDishLongestName()
@@ -18,10 +56,11 @@ void checkDishLongestName()
     }
 }
 
-void AlgorithmBootcamp() {
+void AlgorithmBootcamp()
+{
     char ch;
-    FILE *fp = fopen("../model/splash.txt","r");
-    while((ch = fgetc(fp)) != EOF)
+    FILE *fp = fopen("../model/splash.txt", "r");
+    while ((ch = fgetc(fp)) != EOF)
     {
         printf("%c", ch);
     }
@@ -29,22 +68,24 @@ void AlgorithmBootcamp() {
     fclose(fp);
 }
 
-void insert(char *str) {
-    int index = djb2(str);
+void insert(char *str)
+{
+    int idx = djb2(str);
 
-    if(headCustomer[index])
+    if (headCustomer[idx])
     {
         Customer *temp = createCustomer(str);
-        tailCustomer[index]->next = temp;
-        tailCustomer[index] = temp;
+        tailCustomer[idx]->next = temp;
+        tailCustomer[idx] = temp;
     }
     else
     {
-        headCustomer[index] = tailCustomer[index] = createCustomer(str);
+        headCustomer[idx] = tailCustomer[idx] = createCustomer(str);
     }
 }
 
-void editFileDish() {
+void editFileDish()
+{
     FILE *fdish = fopen("dish.txt", "w");
 
     currDish = headDish;
@@ -53,28 +94,34 @@ void editFileDish() {
         fprintf(fdish, "Nama Dish: %s\n", currDish->foodName);
         fprintf(fdish, "Harga: Rp%d\n", currDish->price);
         fprintf(fdish, "Jumlah: %d\n", currDish->quantity);
-        if(currDish != tailDish) fprintf(fdish,"\n");
+        if (currDish != tailDish)
+            fprintf(fdish, "\n");
         currDish = currDish->next;
     }
     fclose(fdish);
 }
 
-void editFileCust() {
+void editFileCust()
+{
     FILE *fcust = fopen("customer.txt", "w");
-    
+
     for (int i = 0; i < 26; i++)
     {
         if (headCustomer[i])
         {
-            currCustomer = headCustomer[i]; int flag = 0;
+            currCustomer = headCustomer[i];
+            int flag = 0;
             while (currCustomer)
             {
-                if (flag == 0) fprintf(fcust, "%d. ", i);
+                if (flag == 0)
+                    fprintf(fcust, "%d. ", i);
                 fprintf(fcust, "%s", currCustomer->name);
-                if (!currCustomer->next) fprintf(fcust, "\n");
+                if (!currCustomer->next)
+                    fprintf(fcust, "\n");
                 else
                 {
-                    fprintf(fcust, " -> "); flag = 1;
+                    fprintf(fcust, " -> ");
+                    flag = 1;
                 }
                 currCustomer = currCustomer->next;
             }
@@ -83,16 +130,19 @@ void editFileCust() {
     fclose(fcust);
 }
 
-void printDishes() {
+void printDishes()
+{
     currDish = headDish;
     for (int i = 0; i < ctrDish; i++)
     {
-        printf("%d. ", i+1);
+        printf("%d. ", i + 1);
         int diff = longestDishName - strctr(currDish->foodName);
 
-        for (int i = 0; i < diff/2; i++) printf(" ");
+        for (int i = 0; i < diff / 2; i++)
+            printf(" ");
         printf(" %s ", currDish->foodName);
-        for (int i = 0; i < diff/2; i++) printf(" ");
+        for (int i = 0; i < diff / 2; i++)
+            printf(" ");
 
         printf("   %03d    ", currDish->quantity);
 
@@ -101,7 +151,8 @@ void printDishes() {
     }
 }
 
-void popHead() {
+void popHead()
+{
     if (headDish && headDish == tailDish)
     {
         headDish = tailDish = NULL;
@@ -116,7 +167,8 @@ void popHead() {
     }
 }
 
-void popTail() {
+void popTail()
+{
     if (headDish && headDish == tailDish)
     {
         headDish = tailDish = NULL;
@@ -129,6 +181,27 @@ void popTail() {
         free(tailDish);
         tailDish = newTail;
     }
+}
+
+void formatOrder(const char *inputUnformatted, char **orderDishName, int *dishAmount)
+{
+    char tempDishName[255], ctrDish[255];
+    int idx = 0, j = 0;
+    for (idx = 0; ((inputUnformatted[idx + 1] != 'x') && (!('0' <= inputUnformatted[idx + 2] && inputUnformatted[idx + 2] <= '9'))); idx++)
+    {
+        tempDishName[idx] = inputUnformatted[idx];
+    }
+    tempDishName[idx] = '\0';
+
+    idx += 2;
+    for (int i = idx; inputUnformatted[i] != '\0'; i++, j++)
+    {
+        ctrDish[j] = inputUnformatted[i];
+    }
+    ctrDish[j] = '\0';
+
+    (*dishAmount) = atoi(ctrDish);
+    (*orderDishName) = strdup(tempDishName);
 }
 
 void pushDishTail(char *foodName, int price, int quantity)
@@ -147,32 +220,41 @@ void pushDishTail(char *foodName, int price, int quantity)
     }
 }
 
-void printHeader(int len, int xtra) {
+void printHeader(int len, int xtra)
+{
     int max_length = len + 23 + xtra;
 
-    for (int i = 0; i < max_length; i++) printf("=");
+    for (int i = 0; i < max_length; i++)
+        printf("=");
     puts("");
 
-    for (int i = 0; i < (max_length-11)/2; i++) printf(" ");
+    for (int i = 0; i < (max_length - 11) / 2; i++)
+        printf(" ");
     printf("Bude's Menu");
-    for (int i = 0; i < (max_length-11)/2; i++) printf(" ");
+    for (int i = 0; i < (max_length - 11) / 2; i++)
+        printf(" ");
     puts("");
 
-    for (int i = 0; i < max_length; i++) printf("=");
+    for (int i = 0; i < max_length; i++)
+        printf("=");
     puts("");
 
     printf("No.");
-    for (int i = 0; i < (xtra + 1); i++) printf(" ");
+    for (int i = 0; i < (xtra + 1); i++)
+        printf(" ");
 
-    for (int i = 0; i < (len - 4)/2; i++) printf(" ");
+    for (int i = 0; i < (len - 4) / 2; i++)
+        printf(" ");
     printf("Name");
-    for (int i = 0; i < (len - 4)/2; i++) printf(" ");
+    for (int i = 0; i < (len - 4) / 2; i++)
+        printf(" ");
 
     printf("  Quantity");
     printf("   Price\n");
 }
 
-int checkUniqueDish(char *tempName) {
+int checkUniqueDish(char *tempName)
+{
     currDish = headDish;
     while (currDish)
     {
@@ -208,8 +290,9 @@ int popThisDish(char *name)
         {
             currDish = currDish->next;
         }
-        
-        if (!currDish) {
+
+        if (!currDish)
+        {
             return 1;
         }
 
@@ -226,7 +309,8 @@ int popThisDish(char *name)
 int checkExtraCount()
 {
     int extra_ctr = 0, jumlahMenu = ctrDish;
-    if (jumlahMenu > 99) {
+    if (jumlahMenu > 99)
+    {
         do
         {
             extra_ctr++;

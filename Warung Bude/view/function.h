@@ -34,6 +34,7 @@ int strctr(char *str);
 
 // source
 unsigned long djb2(char *str, int total);
+struct Dish *searchThisDishByName(char *orderDishName);
 void checkDishLongestName();
 void AlgorithmBootcamp();
 void insert(char *str);
@@ -42,6 +43,7 @@ void editFileCust();
 void printDishes();
 void popHead();
 void popTail();
+void formatOrder(const char *inputUnformatted,  char **orderDishName, int *dishAmount);
 void pushDishTail(char *foodName, int price, int quantity);
 void printHeader(int len, int xtra); // Credit N40
 int checkUniqueDish(char *tempName);
