@@ -272,7 +272,6 @@ void order() {
         {
             cls(); mainMenu();
         }
-        // formatOrder((char *)inputUnformatted, &orderDishName, &dishAmount);
         int idx = 0, j = 0;
         for (idx = 0; inputUnformatted[idx+1] != 'x' && (!('0'<= inputUnformatted[idx+2] && inputUnformatted[idx+2] <= '9')); idx++)
         {
