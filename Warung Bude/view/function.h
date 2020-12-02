@@ -35,16 +35,20 @@ int strctr(char *str);
 // source
 unsigned long djb2(char *str, int total);
 struct Dish *searchThisDishByName(char *orderDishName);
+struct Customer *searchThisCustomerByName(char *orderCustomerName);
+struct Customer *searchThisHeadCustomerByName(char *name);
+void popCustomerHead(int idx);
 void checkDishLongestName();
 void AlgorithmBootcamp();
 void insert(char *str);
 void editFileDish();
 void editFileCust();
 void printDishes();
-void popHead();
-void popTail();
-void formatOrder(const char *inputUnformatted,  char **orderDishName, int *dishAmount);
+void popDishHead();
+void popDishTail();
+void formatOrder(char *inputUnformatted,  char **orderDishName, int *dishAmount);
 void pushDishTail(char *foodName, int price, int quantity);
+void pushOrderTail(struct Customer *orderByThisName, struct Order *insertThisOrderPlease);
 void printHeader(int len, int xtra); // Credit N40
 int checkUniqueDish(char *tempName);
 int popThisDish(char *name);

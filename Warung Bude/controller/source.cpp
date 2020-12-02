@@ -5,7 +5,8 @@ unsigned long djb2(char *str)
 {
     unsigned long hash = 5381;
     int c;
-    while ((c = *str++)) hash = ((hash << 5) + hash) + c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c;
     return hash % 25;
 }
 
@@ -43,6 +44,65 @@ struct Dish *searchThisDishByName(char *orderDishName)
         }
     }
     return NULL;
+}
+
+struct Customer *searchThisCustomerByName(char *orderCustomerName)
+{
+    int idx = djb2(orderCustomerName);
+
+    if (headCustomer[idx] == NULL)
+    {
+        return NULL;
+    }
+
+    currCustomer = headCustomer[idx];
+    while (currCustomer != NULL)
+    {
+        if (strcmp(orderCustomerName, currCustomer->name) == 0)
+        {
+            return currCustomer;
+        }
+        currCustomer = currCustomer->next;
+    }
+
+    return NULL;
+}
+
+struct Customer *searchThisHeadCustomerByName(char *name) {
+    int idx = djb2(name);
+
+    if(!headCustomer[idx]) {
+        return NULL;
+    }
+    else {
+        currCustomer = headCustomer[idx];
+        if(strcmp(name, currCustomer->name) == 0) {
+            return currCustomer;
+        }
+    }
+    return NULL;
+}
+
+void popCustomerHead(int idx)
+{
+    if (headCustomer[idx] == NULL)
+    {
+        return;
+    }
+    if (headCustomer[idx] == tailCustomer[idx])
+    {
+        headCustomer[idx] = tailCustomer[idx] = NULL;
+        free(headCustomer[idx]);
+    }
+    else
+    {
+        struct Customer *newHead = headCustomer[idx];
+        newHead = newHead->next;
+        newHead->prev = NULL;
+        headCustomer[idx] = NULL;
+        free(headCustomer[idx]);
+        headCustomer[idx] = newHead;
+    }
 }
 
 void checkDishLongestName()
@@ -151,7 +211,7 @@ void printDishes()
     }
 }
 
-void popHead()
+void popDishHead()
 {
     if (headDish && headDish == tailDish)
     {
@@ -167,7 +227,7 @@ void popHead()
     }
 }
 
-void popTail()
+void popDishTail()
 {
     if (headDish && headDish == tailDish)
     {
@@ -183,11 +243,11 @@ void popTail()
     }
 }
 
-void formatOrder(const char *inputUnformatted, char **orderDishName, int *dishAmount)
+void formatOrder(char *inputUnformatted, char **orderDishName, int *dishAmount)
 {
-    char tempDishName[255], ctrDish[255];
+    char tempDishName[255];
     int idx = 0, j = 0;
-    for (idx = 0; ((inputUnformatted[idx + 1] != 'x') && (!('0' <= inputUnformatted[idx + 2] && inputUnformatted[idx + 2] <= '9'))); idx++)
+    for (idx = 0; inputUnformatted[idx + 1] != 'x'; idx++)
     {
         tempDishName[idx] = inputUnformatted[idx];
     }
@@ -196,11 +256,9 @@ void formatOrder(const char *inputUnformatted, char **orderDishName, int *dishAm
     idx += 2;
     for (int i = idx; inputUnformatted[i] != '\0'; i++, j++)
     {
-        ctrDish[j] = inputUnformatted[i];
+        (*dishAmount) = ((*dishAmount) * 10) + (inputUnformatted[i] - '0');
     }
-    ctrDish[j] = '\0';
 
-    (*dishAmount) = atoi(ctrDish);
     (*orderDishName) = strdup(tempDishName);
 }
 
@@ -217,6 +275,28 @@ void pushDishTail(char *foodName, int price, int quantity)
         tailDish->next = temp;
         temp->prev = tailDish;
         tailDish = temp;
+    }
+}
+
+void pushOrderTail(struct Customer *orderByThisName, struct Order *temp)
+{
+    int idx = djb2(orderByThisName->name);
+
+    currCustomer = headCustomer[idx];
+    while (currCustomer) {
+        if (strcmp(currCustomer->name, orderByThisName->name) == 0) {
+            break;
+        }
+        currCustomer = currCustomer->next;
+    }
+
+    if (!currCustomer->headOrder) {
+        currCustomer->headOrder = currCustomer->tailOrder = temp;
+    }
+    else {
+        currCustomer->tailOrder->next = temp;
+        temp->prev = currCustomer->tailOrder;
+        currCustomer->tailOrder = temp;
     }
 }
 
@@ -275,12 +355,12 @@ int popThisDish(char *name)
     }
     else if (strcmp(name, headDish->foodName) == 0)
     {
-        popHead();
+        popDishHead();
         return 0;
     }
     else if (strcmp(name, tailDish->foodName) == 0)
     {
-        popTail();
+        popDishTail();
         return 0;
     }
     else
@@ -330,7 +410,7 @@ bool search(char *name)
             currCustomer = headCustomer[i];
             while (currCustomer)
             {
-                if (strcasecmp(name, currCustomer->name) == 0)
+                if (strcmp(name, currCustomer->name) == 0)
                 {
                     return true;
                 }

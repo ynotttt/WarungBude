@@ -236,31 +236,22 @@ void order() {
         cls(); mainMenu();
     }
     cls();
+
     char userOrder[255];
+    struct Customer *orderByThisName = NULL;
     while (1)
     {
-        int flagOrder = 1;
-        do
+        printf("Insert the customer's name: ");
+        scanf("%[^\n]", userOrder); getchar();
+        if (userOrder[0]-'0' == 0)
         {
-            flagOrder = 0;
-            printf("Insert the customer’s name to be searched: "); scanf("%[^\n]", userOrder); getchar();
-            if (userOrder[0] - '0' == 0)
-            {
-                cls(); mainMenu();
-            }
-            for (int i = 0; userOrder[i] != '\0'; i++)
-            {
-                if (userOrder[i] == ' ' || userOrder[i] < 'A' || ('Z' < userOrder[i] && userOrder[i] < 'a') || userOrder[i] > 'z')
-                {
-                    flagOrder = 1;
-                    break;
-                }
-            }
-        } while (flagOrder);
-
-        bool lostAndFound = search(userOrder);
-        if (!lostAndFound) continue;
-        else break;
+            cls(); mainMenu();
+        }
+        orderByThisName = searchThisCustomerByName((char *)userOrder);
+        if(orderByThisName) {
+            break;
+        }
+        printf("That customer is currently not available!\n");
     }
     
     int nOrder;
@@ -273,28 +264,44 @@ void order() {
         }
     } while (nOrder < 0);
     
-    char arr[255];
     for (int i = 0; i < nOrder; i++)
     {
-        char inputUnformatted[255], *orderDishName; int dishAmount;
+        char inputUnformatted[255], orderDishName[255], dishCtr[255]; int dishAmount;
         printf("[%d] Insert the dish’s name and quantity: ", i+1); scanf("%[^\n]", inputUnformatted); getchar();
         if (inputUnformatted[0] - '0' == 0)
         {
             cls(); mainMenu();
         }
-        formatOrder(inputUnformatted, &orderDishName, &dishAmount);
+        // formatOrder((char *)inputUnformatted, &orderDishName, &dishAmount);
+        int idx = 0, j = 0;
+        for (idx = 0; inputUnformatted[idx+1] != 'x' && (!('0'<= inputUnformatted[idx+2] && inputUnformatted[idx+2] <= '9')); idx++)
+        {
+            orderDishName[idx] = inputUnformatted[idx];
+        }   
+        orderDishName[idx] = '\0';
 
-        struct Dish *isThisDishAvailable = searchThisDishByName(orderDishName);
-        if (isThisDishAvailable) {
-            if(isThisDishAvailable->quantity - dishAmount < 0){
-                printf("We only got %d Dish available for %s. Please input another amount.\n", isThisDishAvailable->quantity, isThisDishAvailable->foodName);
+        idx += 2;
+        for (int i = idx; inputUnformatted[i] != '\0'; i++, j++)
+        {
+            dishCtr[j] = inputUnformatted[i];
+        }
+        dishCtr[j] = '\0';
+        dishAmount = atoi(dishCtr);
+
+        struct Dish *tempDishOrder = searchThisDishByName(orderDishName);
+        if (tempDishOrder) {
+            if (tempDishOrder->quantity - dishAmount < 0) {
+                printf("We only got %d stock for this dish. Please input another amount.\n", tempDishOrder->quantity);
                 i--; continue;
             }
-            isThisDishAvailable->quantity -= dishAmount;
+            tempDishOrder->quantity -= dishAmount;
+            editFileDish();
+            struct Order *temp = createOrder((char*)orderDishName, tempDishOrder->price, dishAmount);
+            pushOrderTail(orderByThisName, temp);
         }
         else {
-            printf("%s is currently not available. Please input another Dish.\n", orderDishName);
-            i--;
+            puts("That dish currently isn't available. Please input another dish.");
+            i--; continue;
         }
     }
 
@@ -310,18 +317,36 @@ void payment() {
         enterPrompt(); cls(); mainMenu();
     }
 
-    int idx;
-    do
-    {
-        printf("Insert the customer’s index: "); scanf("%d", &idx); getchar();
-    } while (idx < 0 || idx > 26);
-    puts("");
-    if (!headCustomer[idx]) {
-        puts("There's no order for that customer's ID");
-        enterPrompt(); cls(); mainMenu();
+    int custIndex;
+    while (1) {
+        printf("Insert the customer’s index: "); scanf("%d", &custIndex); getchar();
+        if (custIndex == -1) {
+            cls(); mainMenu();
+        }
+
+        if (headCustomer[custIndex]) {
+            currCustomer = headCustomer[custIndex];
+            break;
+        }
+
+        puts("There are currently no customer with that customer index.");
     }
 
-    
+    puts("");
+    printf("%s\n", currCustomer->name); getchar();
+    currOrder = currCustomer->headOrder;
+
+    int orderNumber = 1, totalPayments = 0;
+    while (currOrder) {
+        printf("[%d] %s x%d\n", orderNumber, currOrder->name, currOrder->quantity);
+        totalPayments += currOrder->price * currOrder->quantity;
+        orderNumber++;
+        currOrder = currOrder->next; 
+    }
+    printf("Total: Rp%d\n", totalPayments);
+    popCustomerHead(custIndex);
+    enterPrompt();
+    cls(); mainMenu();
 }
 
 /* 8. Exit Warteg */

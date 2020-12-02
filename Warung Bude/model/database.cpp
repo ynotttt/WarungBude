@@ -7,9 +7,9 @@ struct Dish {
 
 struct Order {
     char name[255];
-    int quantity, price;
+    int quantity = 0, price;
     Order *prev, *next;
-} *newOrder, *currOrder, *delOrder;
+} *currOrder;
 
 struct Customer {
     char name[255];
@@ -30,5 +30,13 @@ Customer *createCustomer(char *name) {
     Customer *temp = (Customer *)malloc(sizeof(Customer));
     strcpy(temp->name, name);
     temp->next = temp->prev = NULL;
+    return temp;
+}
+
+Order *createOrder(char *name, int price, int quantity) {
+    Order *temp = (Order *)malloc(sizeof(Order));
+    strcpy(temp->name, name);
+    temp->price = price;
+    temp->quantity = quantity;
     return temp;
 }
